@@ -21,8 +21,29 @@ import { AdminApp } from './AdminApp'
 
 const DEMO_GAME_ID = 'dad9d436-36ad-401f-b152-507282420483'
 const LIVE_GAME_ID = import.meta.env.VITE_LIVE_GAME_ID || ''
+const MAX_GPS_FIX_AGE_MS = 15_000
 const IET_CENTER_LAT = 22.6811
 const IET_CENTER_LNG = 75.8805
+
+function isFreshGpsFix(location, now = Date.now()) {
+  if (
+    !location ||
+    !Number.isFinite(location.latitude) ||
+    location.latitude < -90 ||
+    location.latitude > 90 ||
+    !Number.isFinite(location.longitude) ||
+    location.longitude < -180 ||
+    location.longitude > 180 ||
+    !Number.isFinite(location.accuracy) ||
+    location.accuracy <= 0 ||
+    !Number.isFinite(location.positionTimestamp)
+  ) {
+    return false
+  }
+
+  const ageMs = now - location.positionTimestamp
+  return ageMs >= 0 && ageMs <= MAX_GPS_FIX_AGE_MS
+}
 
 /*
   ----------------------------------------------------------
@@ -36,6 +57,7 @@ function usePlayerLocation() {
 
   useEffect(() => {
     if (!navigator.geolocation) {
+      setLocation(null)
       setGpsError('Geolocation is not supported by this browser.')
       setGpsStatus('GPS unavailable')
       return
@@ -50,12 +72,14 @@ function usePlayerLocation() {
           latitude,
           longitude,
           accuracy,
+          positionTimestamp: position.timestamp,
         })
         setGpsError('')
         setGpsStatus('GPS active')
       },
       (error) => {
         console.error('GPS ERROR:', error)
+        setLocation(null)
         if (error.code === error.PERMISSION_DENIED) {
           setGpsError(
             'Location permission was denied. Please allow location access.'
@@ -481,6 +505,19 @@ function App() {
         ? simulatedLocation
         : location
 
+      if (!canSimulate) {
+        if (gpsError) {
+          throw new Error(`${gpsError} A new successful GPS reading is required before check-in.`)
+        }
+        if (!isFreshGpsFix(location)) {
+          throw new Error(
+            location
+              ? 'Your GPS reading is older than 15 seconds. Waiting for a fresh location before check-in.'
+              : 'Waiting for a new successful GPS reading before check-in.'
+          )
+        }
+      }
+
       if (!checkInLocation) {
         throw new Error(
           canSimulate
@@ -795,7 +832,7 @@ function App() {
               selectedGameId !== team.game_id ||
               !gameState?.game_id ||
               gameState.game_id !== team.game_id ||
-              (!demoSimulationAllowed && !location) ||
+              (!demoSimulationAllowed && (gpsError || !isFreshGpsFix(location))) ||
               (demoSimulationAllowed && !location && !simulatedLocation)
             }
           >
@@ -806,6 +843,11 @@ function App() {
           <div className="gps-status-indicator">
             {gpsIndicatorText}
           </div>
+          {team && !demoSimulationAllowed && gpsError && (
+            <div style={{ color: 'var(--color-error-text)', fontSize: '12px', marginTop: '6px' }}>
+              {gpsError} A new successful GPS reading is required before live check-in.
+            </div>
+          )}
 
           {/* CHECK IN RESULT */}
           {checkInResult && (
