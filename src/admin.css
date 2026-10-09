@@ -1,0 +1,721 @@
+/* -------------------------------------------------------
+   FIRESTORM — Organizer Console Styles
+   Inherits CSS custom properties from styles.css
+   ------------------------------------------------------- */
+
+/* Full-width admin layout (not the narrow player layout) */
+.admin-root {
+  min-height: 100vh;
+  background: var(--bg-app);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.admin-header-brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.admin-header-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.admin-header-subtitle {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-fire);
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.admin-header-email {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.btn-signout {
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-signout:hover {
+  border-color: var(--color-fire);
+  color: var(--color-fire);
+}
+
+/* ── Body Layout ─────────────────────────────────────────── */
+.admin-body {
+  flex: 1;
+  padding: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Login Screen ─────────────────────────────────────────── */
+.admin-login-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--bg-app);
+  padding: 24px;
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 380px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-login-brand {
+  text-align: center;
+}
+
+.admin-login-brand-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+.admin-login-brand-sub {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-fire);
+  margin-top: 2px;
+}
+
+.admin-login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-field-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.admin-input {
+  width: 100%;
+  padding: 9px 11px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.admin-input:focus {
+  border-color: var(--border-focus);
+}
+
+.btn-admin-primary {
+  width: 100%;
+  padding: 11px 16px;
+  background: var(--color-fire);
+  border: none;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-admin-primary:hover:not(:disabled) {
+  background: var(--color-fire-hover);
+}
+
+.btn-admin-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.admin-login-error {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error);
+  color: var(--color-error-text);
+  border-radius: 5px;
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+/* ── Access Denied ────────────────────────────────────────── */
+.admin-denied-card {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error);
+  color: var(--color-error-text);
+  border-radius: 8px;
+  padding: 20px 18px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.admin-denied-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: #ffffff;
+}
+
+/* ── Card ─────────────────────────────────────────────────── */
+.admin-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+
+.admin-card-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+
+/* ── Game selector ────────────────────────────────────────── */
+.admin-game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-game-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card-subtle);
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+  gap: 10px;
+}
+
+.admin-game-row:hover {
+  border-color: #3a4050;
+}
+
+.admin-game-row.selected {
+  border-color: var(--color-fire);
+  background: var(--color-fire-muted);
+}
+
+.admin-game-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.admin-game-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.tag-live {
+  background: rgba(22, 163, 74, 0.15);
+  color: #86efac;
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.tag-demo {
+  background: rgba(234, 88, 12, 0.12);
+  color: #fdba74;
+  border: 1px solid rgba(234, 88, 12, 0.25);
+}
+
+.tag-status-waiting {
+  background: #1e222c;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.tag-status-live {
+  background: rgba(22, 163, 74, 0.15);
+  color: #86efac;
+  border: 1px solid rgba(22, 163, 74, 0.3);
+}
+
+.tag-status-finished {
+  background: #1e222c;
+  color: var(--text-dim);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ── Checkpoint table ─────────────────────────────────────── */
+.admin-cp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.admin-cp-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-cp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.admin-cp-table th {
+  text-align: left;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.admin-cp-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid #1a1d26;
+  color: var(--text-muted);
+  vertical-align: middle;
+}
+
+.admin-cp-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-cp-table tr:hover td {
+  background: #13151c;
+}
+
+.cp-name-cell {
+  color: #ffffff;
+  font-weight: 500;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cp-inactive {
+  opacity: 0.45;
+}
+
+.tag-core {
+  background: rgba(185, 28, 28, 0.2);
+  color: #fca5a5;
+  border: 1px solid rgba(185, 28, 28, 0.35);
+}
+
+.tag-active {
+  background: rgba(22, 163, 74, 0.12);
+  color: #86efac;
+  border: 1px solid rgba(22, 163, 74, 0.25);
+}
+
+.tag-inactive {
+  background: #1a1d26;
+  color: var(--text-dim);
+  border: 1px solid var(--border-subtle);
+}
+
+.btn-edit {
+  padding: 4px 10px;
+  background: #1e222b;
+  border: 1px solid #2e3444;
+  border-radius: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-edit:hover {
+  border-color: var(--color-fire);
+  color: var(--color-fire);
+}
+
+.btn-add-cp {
+  padding: 7px 14px;
+  background: var(--color-fire);
+  border: none;
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-add-cp:hover:not(:disabled) {
+  background: var(--color-fire-hover);
+}
+
+.btn-add-cp:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── State feedback (loading, empty, error) ───────────────── */
+.admin-state-msg {
+  padding: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.admin-error-msg {
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error);
+  color: var(--color-error-text);
+  border-radius: 5px;
+  padding: 9px 12px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.admin-success-msg {
+  background: var(--color-success-bg);
+  border: 1px solid var(--color-success);
+  color: var(--color-success-text);
+  border-radius: 5px;
+  padding: 9px 12px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+/* ── Modal overlay ────────────────────────────────────────── */
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px 16px 40px;
+  overflow-y: auto;
+}
+
+.admin-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.admin-modal-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.btn-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  transition: color 0.15s ease;
+}
+
+.btn-modal-close:hover {
+  color: var(--text-main);
+}
+
+.admin-modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+}
+
+.admin-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ── Form fields inside modal ─────────────────────────────── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-field label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-dim);
+}
+
+.form-field label .req {
+  color: var(--color-fire);
+  margin-left: 2px;
+}
+
+.admin-input-full {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.admin-input-full:focus {
+  border-color: var(--border-focus);
+}
+
+.admin-input-full.has-error {
+  border-color: var(--color-error);
+}
+
+.admin-textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 13px;
+  outline: none;
+  resize: vertical;
+  min-height: 68px;
+  font-family: var(--font-sans);
+  line-height: 1.45;
+  transition: border-color 0.15s ease;
+}
+
+.admin-textarea:focus {
+  border-color: var(--border-focus);
+}
+
+.field-error {
+  font-size: 10px;
+  color: var(--color-error-text);
+  margin-top: 1px;
+}
+
+/* Toggle / checkbox row */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-row input[type='checkbox'] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-fire);
+  cursor: pointer;
+}
+
+.toggle-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ── Map frame inside editor ──────────────────────────────── */
+.admin-map-frame {
+  height: 220px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.admin-map-hint {
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ── Advisory notes ───────────────────────────────────────── */
+.admin-advisory {
+  background: var(--bg-card-subtle);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--color-fire);
+  border-radius: 0 5px 5px 0;
+  padding: 9px 12px;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Cancel button */
+.btn-cancel {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 5px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-cancel:hover {
+  border-color: #3a4050;
+  color: var(--text-main);
+}
+
+/* Save button */
+.btn-save {
+  padding: 8px 20px;
+  background: var(--color-fire);
+  border: none;
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: var(--color-fire-hover);
+}
+
+.btn-save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .admin-body {
+    padding: 16px;
+  }
+
+  .admin-header {
+    padding: 12px 16px;
+  }
+
+  .form-row,
+  .form-row-3 {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-header-email {
+    display: none;
+  }
+}

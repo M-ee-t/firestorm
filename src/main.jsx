@@ -17,6 +17,7 @@ import {
   checkIn,
 } from './lib/teams'
 import { supabase } from './lib/supabase'
+import { AdminApp } from './AdminApp'
 
 const DEMO_GAME_ID = 'dad9d436-36ad-401f-b152-507282420483'
 const IET_CENTER_LAT = 22.6811
@@ -1009,8 +1010,12 @@ function App() {
   )
 }
 
+const isAdminMode =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('admin') === 'true'
+
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    {isAdminMode ? <AdminApp /> : <App />}
   </React.StrictMode>
 )
