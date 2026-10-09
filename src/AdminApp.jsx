@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
+import './leaflet-icons'
 import {
   MapContainer,
   TileLayer,

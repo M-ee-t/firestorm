@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import './leaflet-icons'
 import './styles.css'
 import 'leaflet/dist/leaflet.css'
 import {
