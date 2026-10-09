@@ -20,6 +20,7 @@ import { supabase } from './lib/supabase'
 import { AdminApp } from './AdminApp'
 
 const DEMO_GAME_ID = 'dad9d436-36ad-401f-b152-507282420483'
+const LIVE_GAME_ID = import.meta.env.VITE_LIVE_GAME_ID || ''
 const IET_CENTER_LAT = 22.6811
 const IET_CENTER_LNG = 75.8805
 
@@ -177,32 +178,51 @@ function App() {
 
   const [teamName, setTeamName] = useState('')
   const [teamCode, setTeamCode] = useState('')
+  const [selectedGameId, setSelectedGameId] = useState(DEMO_GAME_ID)
   const [status, setStatus] = useState('Not connected')
   const [error, setError] = useState('')
   const [showSwitchSquad, setShowSwitchSquad] = useState(false)
 
   const { location, gpsError, gpsStatus } = usePlayerLocation()
 
-  // 1. LIVE GAME VS DEMO MODE DETECTION
-  const isDemoGame = (() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search)
-      if (params.get('demo') === 'false' || params.get('live') === 'true') return false
-      if (params.get('demo') === 'true') return true
+  // Game ID is selected explicitly during setup and confirmed by server state.
+  const activeGameId = team?.game_id || null
+
+  // 2. DEMO MODE — derived exclusively from server-provided demo_game flag.
+  // URL parameters (?demo=true / ?live=true) are intentionally ignored so that
+  // a player cannot force demo-pin access by manipulating the query string.
+  // 3. SIMULATED LOCATION ALLOWED — both conditions must be true:
+  //    a) The server reports this game as a demo game.
+  //    b) The active game ID matches the designated demo game UUID exactly.
+  // This prevents demo-pin check-ins in any other game, even if demo_game were
+  // somehow set to true on a non-demo record.
+  const demoSimulationAllowed =
+    selectedGameId === DEMO_GAME_ID &&
+    team?.game_id === DEMO_GAME_ID &&
+    gameState?.demo_game === true &&
+    gameState?.game_id === DEMO_GAME_ID &&
+    activeGameId === DEMO_GAME_ID
+
+  function handleMapSimulationClick(location) {
+    if (
+      selectedGameId !== DEMO_GAME_ID ||
+      team?.game_id !== DEMO_GAME_ID ||
+      gameState?.demo_game !== true ||
+      gameState?.game_id !== DEMO_GAME_ID
+    ) {
+      return
     }
-    if (gameState?.demo_game !== undefined) return Boolean(gameState.demo_game)
-    if (gameState?.is_demo !== undefined) return Boolean(gameState.is_demo)
-    if (team?.demo_game !== undefined) return Boolean(team.demo_game)
-    return true
-  })()
+    setSimulatedLocation(location)
+  }
 
   async function fetchLeaderboard() {
     try {
+      if (!activeGameId) return
       setLeaderboardError('')
       const { data, error: leaderboardError } = await supabase
         .from('leaderboard')
         .select('team_name, score, finished_at, updated_at')
-        .eq('game_id', DEMO_GAME_ID)
+        .eq('game_id', activeGameId)
         .order('score', { ascending: false })
 
       if (leaderboardError) throw leaderboardError
@@ -249,8 +269,14 @@ function App() {
         throw new Error('Enter a team name.')
       }
       setStatus('Creating team...')
-      const result = await createTeam(DEMO_GAME_ID, teamName.trim())
-      setTeam(result)
+      if (!selectedGameId) throw new Error('Select a configured game first.')
+      const result = await createTeam(selectedGameId, teamName.trim())
+      if (result?.game_id && result.game_id !== selectedGameId) {
+        throw new Error('The server returned a different game than the one selected.')
+      }
+      setGameState(null)
+      setSimulatedLocation(null)
+      setTeam({ ...result, game_id: result.game_id || selectedGameId })
       setStatus('Team created!')
       setShowSwitchSquad(false)
     } catch (err) {
@@ -270,8 +296,14 @@ function App() {
         throw new Error('Enter a team code.')
       }
       setStatus('Joining team...')
-      const result = await joinTeam(DEMO_GAME_ID, teamCode.trim().toUpperCase())
-      setTeam(result)
+      if (!selectedGameId) throw new Error('Select a configured game first.')
+      const result = await joinTeam(selectedGameId, teamCode.trim().toUpperCase())
+      if (result?.game_id && result.game_id !== selectedGameId) {
+        throw new Error('The server returned a different game than the one selected.')
+      }
+      setGameState(null)
+      setSimulatedLocation(null)
+      setTeam({ ...result, game_id: result.game_id || selectedGameId })
       setStatus('Joined team!')
       setShowSwitchSquad(false)
     } catch (err) {
@@ -292,6 +324,9 @@ function App() {
       }
       setStatus('Fetching secure game state...')
       const state = await getGameState()
+      if (state?.game_id !== team.game_id) {
+        throw new Error('The server game state does not match the selected game.')
+      }
       setGameState(state)
       setStatus('Game state received!')
     } catch (err) {
@@ -431,21 +466,31 @@ function App() {
         throw new Error('Create or join a team first.')
       }
 
-      // Live game uses real GPS only; demo game allows demo pin
-      const checkInLocation = isDemoGame
-        ? (simulatedLocation || location)
+      if (
+        selectedGameId !== team.game_id ||
+        !gameState?.game_id ||
+        !activeGameId ||
+        gameState.game_id !== team.game_id
+      ) {
+        throw new Error('Game state is still loading. Please wait before checking in.')
+      }
+      const canSimulate = demoSimulationAllowed
+      // Demo pin is used only for the designated UUID when the server confirms
+      // demo_game=true. Every other check-in uses browser GPS.
+      const checkInLocation = canSimulate && simulatedLocation
+        ? simulatedLocation
         : location
 
       if (!checkInLocation) {
         throw new Error(
-          isDemoGame
+          canSimulate
             ? 'Waiting for GPS location, or click the map to place a demo pin.'
             : 'Waiting for device GPS location...'
         )
       }
 
       setStatus(
-        isDemoGame && simulatedLocation
+        canSimulate && simulatedLocation
           ? 'Checking demo pin location...'
           : 'Checking device GPS location...'
       )
@@ -457,7 +502,7 @@ function App() {
       )
 
       console.log(
-        isDemoGame && simulatedLocation ? 'DEMO CHECK-IN:' : 'REAL GPS CHECK-IN:',
+        canSimulate && simulatedLocation ? 'DEMO CHECK-IN:' : 'REAL GPS CHECK-IN:',
         result
       )
 
@@ -493,7 +538,7 @@ function App() {
     async function refreshGameStateSilently() {
       try {
         const state = await getGameState()
-        if (!cancelled) {
+        if (!cancelled && state?.game_id === team.game_id) {
           setGameState(state)
         }
       } catch (err) {
@@ -559,7 +604,7 @@ function App() {
 
   // GPS indicator text
   const gpsIndicatorText = (() => {
-    if (isDemoGame && simulatedLocation) {
+    if (demoSimulationAllowed && simulatedLocation) {
       return `DEMO PIN · ±10 M`
     }
     if (location) {
@@ -654,6 +699,14 @@ function App() {
           <p className="setup-desc">
             Create a squad for your team or enter a 4-letter code from a teammate.
           </p>
+          <div className="setup-form-group">
+            <label htmlFor="game-choice">Game</label>
+            <select id="game-choice" className="text-input" value={selectedGameId} onChange={(e) => { setSelectedGameId(e.target.value); setSimulatedLocation(null) }}>
+              <option value={DEMO_GAME_ID}>Demo game</option>
+              {LIVE_GAME_ID && <option value={LIVE_GAME_ID}>Live game</option>}
+            </select>
+            {!LIVE_GAME_ID && <small>No live game is configured. Set VITE_LIVE_GAME_ID to the organizer-provided game UUID.</small>}
+          </div>
           <div className="setup-forms">
             <div className="setup-form-group">
               <label>Create squad</label>
@@ -739,7 +792,11 @@ function App() {
             onClick={handleCheckIn}
             disabled={
               !team ||
-              (!location && (!isDemoGame || !simulatedLocation))
+              selectedGameId !== team.game_id ||
+              !gameState?.game_id ||
+              gameState.game_id !== team.game_id ||
+              (!demoSimulationAllowed && !location) ||
+              (demoSimulationAllowed && !location && !simulatedLocation)
             }
           >
             CHECK IN
@@ -862,10 +919,12 @@ function App() {
       <section className="map-card">
         <div className="map-header-row">
           <span className="section-eyebrow">CAMPUS MAP</span>
-          {isDemoGame && simulatedLocation && (
+          {demoSimulationAllowed && simulatedLocation && (
             <button
               className="btn-link"
-              onClick={() => setSimulatedLocation(null)}
+              onClick={() => {
+                if (demoSimulationAllowed) setSimulatedLocation(null)
+              }}
             >
               Clear demo pin
             </button>
@@ -875,12 +934,12 @@ function App() {
         <div className="map-frame">
           <FirestormMap
             location={location}
-            simulatedLocation={isDemoGame ? simulatedLocation : null}
-            onSimulatedLocation={isDemoGame ? setSimulatedLocation : null}
+            simulatedLocation={demoSimulationAllowed ? simulatedLocation : null}
+            onSimulatedLocation={demoSimulationAllowed ? handleMapSimulationClick : null}
           />
         </div>
 
-        {isDemoGame && (
+        {demoSimulationAllowed && (
           <div className="map-demo-hint">
             Demo mode: Click anywhere on map to set simulated check-in location.
           </div>
@@ -934,7 +993,7 @@ function App() {
       )}
 
       {/* DEVELOPER TEST CONTROLS (ONLY IN DEMO MODE) */}
-      {isDemoGame && (
+      {demoSimulationAllowed && (
         <details className="dev-details">
           <summary className="dev-summary">Developer test controls</summary>
           <div className="dev-content">
