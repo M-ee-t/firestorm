@@ -222,6 +222,9 @@ function App() {
   // This prevents demo-pin check-ins in any other game, even if demo_game were
   // somehow set to true on a non-demo record.
   const demoSimulationAllowed =
+    selectedGameId !== LIVE_GAME_ID &&
+    team?.game_id !== LIVE_GAME_ID &&
+    gameState?.game_id !== LIVE_GAME_ID &&
     selectedGameId === DEMO_GAME_ID &&
     team?.game_id === DEMO_GAME_ID &&
     gameState?.demo_game === true &&
