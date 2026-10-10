@@ -213,23 +213,8 @@ function App() {
   // Game ID is selected explicitly during setup and confirmed by server state.
   const activeGameId = team?.game_id || null
 
-  // 2. DEMO MODE — derived exclusively from server-provided demo_game flag.
-  // URL parameters (?demo=true / ?live=true) are intentionally ignored so that
-  // a player cannot force demo-pin access by manipulating the query string.
-  // 3. SIMULATED LOCATION ALLOWED — both conditions must be true:
-  //    a) The server reports this game as a demo game.
-  //    b) The active game ID matches the designated demo game UUID exactly.
-  // This prevents demo-pin check-ins in any other game, even if demo_game were
-  // somehow set to true on a non-demo record.
-  const demoSimulationAllowed =
-    selectedGameId !== LIVE_GAME_ID &&
-    team?.game_id !== LIVE_GAME_ID &&
-    gameState?.game_id !== LIVE_GAME_ID &&
-    selectedGameId === DEMO_GAME_ID &&
-    team?.game_id === DEMO_GAME_ID &&
-    gameState?.demo_game === true &&
-    gameState?.game_id === DEMO_GAME_ID &&
-    activeGameId === DEMO_GAME_ID
+  // Player check-ins always use browser GPS; map-tap simulation is disabled.
+  const demoSimulationAllowed = false
 
   function handleMapSimulationClick(location) {
     if (
